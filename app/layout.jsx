@@ -7,8 +7,13 @@ import "slick-carousel/slick/slick-theme.css";
 import "./globals.css";
 import Layout from "@/layout/Layout";
 import store from "@/redux/store";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 import Providers from "@/redux/provider";
+import SessionProviders from "@/redux/sessionProvider";
 
 
 const openSans = Open_Sans({ subsets: ["latin"] });
@@ -28,9 +33,12 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={openSans.className}>
-        <Providers>
-          <Layout>{children}</Layout>
-        </Providers>
+        <SessionProviders >
+          <Providers>
+            <ToastContainer />
+            <Layout>{children}</Layout>
+          </Providers>
+        </SessionProviders>
       </body>
     </html>
   );

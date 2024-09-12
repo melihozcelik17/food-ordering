@@ -1,9 +1,7 @@
 import mongoose from "mongoose";
-
-
 const UserSchema = new mongoose.Schema(
     {
-        name: {
+        FullName: {
             type: String,
             required: true,
         },
@@ -30,11 +28,9 @@ const UserSchema = new mongoose.Schema(
         },
         emailVerified: {
             type: String,
-            default: "null"
-        }
-
+            default: null,
+        },
     },
     { timestamps: true }
-)
-
-export default mongoose.model.User || mongoose.model("User", UserSchema);
+);
+export default mongoose.models.User || mongoose.model("User", UserSchema);

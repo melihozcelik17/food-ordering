@@ -6,14 +6,49 @@ import { IoHome, IoExitSharp } from "react-icons/io5";
 import { RiLockPasswordFill, RiEBike2Fill } from "react-icons/ri";
 import { useFormik } from 'formik';
 import { profileSchema } from '@/schema/profile';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Account from '@/components/profile/Account';
 import Password from '@/components/profile/Password';
 import Order from '../order/page';
+import { getSession, signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
-const Profile = () => {
+const Profile = ({ user }) => {
 
     const [tabs, setTabs] = useState(0);
+    const { push } = useRouter();
+    const { data: session } = useSession();
+
+
+    const handleSignOut = () => {
+        if (confirm("Are you sure you want to sign out?")) {
+            signOut({ redirect: false });
+            push('/auth/login');
+        }
+    };
+
+    useEffect(() => {
+        if (!session) {
+            push("/auth/login");
+        }
+    }, [session, push]);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${session?.user?.id}`);
+                setUserData(data);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+
+        if (session?.user?.id) {
+            fetchUserData();
+        }
+    }, [session?.user?.id]);
+
 
     const onSubmit = async (values, actions) => {
         await new Promise((resolve) => setTimeout(resolve, 4000));
@@ -97,7 +132,7 @@ const Profile = () => {
             <div className='lg:w-80 w-100 flex-shrink-0'>
                 <div className='relative flex flex-col items-center px-10 py-5 border border-b-0'>
                     <div><Image src="/images/client2.jpg" alt='' width={100} height={100} className='rounded-full' /></div>
-                    <b className='text-2xl mt-1'>Melih Özçelik</b>
+                    <b className='text-2xl mt-1'>{session?.user?.name || "User Name"}</b>
                 </div>
                 <ul className='text-center font-semibold '>
                     <li className={`flex justify-center border w-full p-3 cursor-pointer hover:bg-primary hover:text-white transition-all ${tabs === 0 && "bg-primary text-white"} `} onClick={() => setTabs(0)}>
@@ -109,7 +144,7 @@ const Profile = () => {
                     <li className={`flex justify-center border w-full p-3 cursor-pointer hover:bg-primary hover:text-white transition-all ${tabs === 2 && "bg-primary text-white"} `} onClick={() => setTabs(2)}>
                         <RiEBike2Fill />
                         <button className='ml-1'>Orders</button></li>
-                    <li className={`flex justify-center border w-full p-3 cursor-pointer hover:bg-primary hover:text-white transition-all ${tabs === 3 && "bg-primary text-white"} `} onClick={() => setTabs(3)}>
+                    <li className={`flex justify-center border w-full p-3 cursor-pointer hover:bg-primary hover:text-white transition-all  `} onClick={handleSignOut}>
                         <IoExitSharp />
                         <button className='ml-1'>Exit</button></li>
                 </ul>
@@ -119,6 +154,10 @@ const Profile = () => {
             {tabs === 2 && <Order />}
         </div >
     )
-}
+};
 
-export default Profile
+
+
+
+
+export default Profile;

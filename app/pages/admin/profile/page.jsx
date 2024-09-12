@@ -12,10 +12,35 @@ import Products from '@/components/admin/Products';
 import Order from '@/components/admin/Order';
 import Category from '@/components/admin/Category';
 import Footer from '@/components/admin/Footer';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const Profile = () => {
-
     const [tabs, setTabs] = useState(0);
+    const { push } = useRouter();
+
+
+    const closeAdminAccount = async () => {
+        try {
+            if (confirm("Are you sure you want to close your Admin account?")) {
+                const res = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/pages/admin`)
+                if (
+                    res.status === 200
+                ) {
+                    push('/admin')
+                    toast.success('Admin account closed successfully')
+
+
+                }
+            }
+
+        } catch (err) {
+            console.log(err);
+
+        }
+    }
+
 
     const onSubmit = async (values, actions) => {
         await new Promise((resolve) => setTimeout(resolve, 4000));
@@ -114,7 +139,7 @@ const Profile = () => {
                     <li className={`flex justify-center border w-full p-3 cursor-pointer hover:bg-primary hover:text-white transition-all ${tabs === 3 && "bg-primary text-white"} `} onClick={() => setTabs(3)}>
                         <IoExitSharp />
                         <button className='ml-1'>Footer</button></li>
-                    <li className={`flex justify-center border w-full p-3 cursor-pointer hover:bg-primary hover:text-white transition-all ${tabs === 4 && "bg-primary text-white"} `} onClick={() => setTabs(4)}>
+                    <li className={`flex justify-center border w-full p-3 cursor-pointer hover:bg-primary hover:text-white transition-all ${tabs === 4 && "bg-primary text-white"} `} onClick={closeAdminAccount} >
                         <IoExitSharp />
                         <button className='ml-1'>Exit</button></li>
                 </ul>
@@ -126,6 +151,22 @@ const Profile = () => {
 
         </div >
     )
+}
+
+export const getServerSideProps = (ctx) => {
+    const myCookie = ctx.req?.cookies || "";
+    if (myCookie.token !== process.env.ADMIN_TOKEN) {
+        return {
+            redirect: {
+                destination: "/admin",
+                permanent: false,
+            },
+        }
+    }
+    return {
+        props: {},
+    }
+
 }
 
 export default Profile
