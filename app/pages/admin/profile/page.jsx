@@ -13,7 +13,7 @@ import Order from '@/components/admin/Order';
 import Category from '@/components/admin/Category';
 import Footer from '@/components/admin/Footer';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { useRouter, useEffect } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 const Profile = () => {
