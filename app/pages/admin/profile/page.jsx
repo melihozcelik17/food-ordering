@@ -6,14 +6,14 @@ import { IoFastFoodSharp, IoExitSharp } from "react-icons/io5";
 import { RiEBike2Fill } from "react-icons/ri";
 import { useFormik } from 'formik';
 import { profileSchema } from '@/schema/profile';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BiCategory } from "react-icons/bi";
 import Products from '@/components/admin/Products';
 import Order from '@/components/admin/Order';
 import Category from '@/components/admin/Category';
 import Footer from '@/components/admin/Footer';
 import axios from 'axios';
-import { useRouter, useEffect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 const Profile = () => {

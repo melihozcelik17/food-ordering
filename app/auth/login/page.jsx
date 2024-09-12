@@ -7,8 +7,9 @@ import { loginSchema } from '@/schema/login';
 import { IoLogoGithub } from "react-icons/io5";
 import Link from 'next/link';
 import { useSession, signIn } from "next-auth/react";
-import { useRouter, useEffect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { useState, useEffect } from "react";
 
 const Login = () => {
     const { data: session } = useSession();
