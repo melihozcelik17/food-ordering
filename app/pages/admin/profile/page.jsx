@@ -20,6 +20,30 @@ const Profile = () => {
     const [tabs, setTabs] = useState(0);
     const { push } = useRouter();
 
+    useEffect(() => {
+        const checkAuthorization = async () => {
+            try {
+                const response = await axios.get('/api/check-token', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.status === 200) {
+                    setIsAuthorized(true);
+                } else {
+                    setIsAuthorized(false);
+                    push('/admin');
+                }
+            } catch (error) {
+                setIsAuthorized(false);
+                push('/admin');
+            }
+        };
+
+        checkAuthorization();
+    }, [push]);
+
+
 
     const closeAdminAccount = async () => {
         try {
@@ -153,20 +177,6 @@ const Profile = () => {
     )
 }
 
-export const getServerSideProps = (ctx) => {
-    const myCookie = ctx.req?.cookies || "";
-    if (myCookie.token !== process.env.ADMIN_TOKEN) {
-        return {
-            redirect: {
-                destination: "/admin",
-                permanent: false,
-            },
-        }
-    }
-    return {
-        props: {},
-    }
 
-}
 
 export default Profile
