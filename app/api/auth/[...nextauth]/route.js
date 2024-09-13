@@ -99,11 +99,12 @@
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+
 import clientPromise from "@/util/mongo";
 import User from "@/models/User";
 import dbConnect from "@/util/dbConnect";
 import bcrypt from "bcrypt";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
 
 // dbConnect();
 
