@@ -1,27 +1,25 @@
+"use client"
 import About from '@/components/About';
 import Campaigns from '@/components/Campaigns';
 import Carousel from '@/components/Carousel';
 import Customers from '@/components/customers/Customers';
 import MenuWrapper from '@/components/product/MenuWrapper';
 import Reservation from '@/components/Reservation';
-import React from 'react'
 
 
 
-const HomeIndex = () => {
+const HomeIndex = ({ categoryList, productList }) => {
+
     return (
-        <React.Fragment >
+        <div>
             <Carousel />
             <Campaigns />
-            <MenuWrapper />
+            <MenuWrapper categoryList={categoryList} productList={productList} />
             <About />
             <Reservation />
             <Customers />
-            {/* <ProductIndex /> */}
-
-        </React.Fragment>
-    )
-
+        </div>
+    );
 }
 
 export default HomeIndex;

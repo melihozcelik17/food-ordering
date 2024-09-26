@@ -1,34 +1,27 @@
-import cookie from "cookie"
+import { NextResponse } from 'next/server';
+import cookie from 'cookie';
 
-const handler = (res, req) => {
-    const { method } = req;
+export async function POST(req) {
+    const { username, password } = await req.json();
 
-    if (method === "POST") {
-        const { username, password } = req.body;
-        if (username === process.env.ADMIN_USERNAME &&
-            password === process.env.ADMIN_PASSWORD) {
-            res.setHeader(
-                "Set-Cookie", cookie.serialize("token", process.env.ADMIN_TOKEN, {
-                    maxAge: 60 * 60,
-                    sameSite: "strict",
-                    path: "/",
-                }));
-            res.status(200).json({ message: "Logged in successfully" });
-        } else {
-            res.status(400).json({ message: "Wrong Credentials" });
-        }
+    if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
+        const response = NextResponse.json({ message: "Logged in successfully" });
+        response.headers.set('Set-Cookie', cookie.serialize('token', process.env.ADMIN_TOKEN, {
+            maxAge: 60 * 60, // 1 saat
+            sameSite: 'strict',
+            path: '/',
+        }));
+        return response;
+    } else {
+        return NextResponse.json({ message: "Wrong Credentials" }, { status: 400 });
     }
+}
 
-    if (method === "PUT") {
-        res.setHeader(
-            "Set-Cookie",
-            cookie.serialize("token", process.env.ADMIN_TOKEN, {
-                maxAge: -1,
-
-                path: "/",
-            }));
-        res.status(200).json({ message: "Successfully" });
-    }
-};
-
-export default handler;
+export async function PUT(req) {
+    const response = NextResponse.json({ message: "Logged out successfully" });
+    response.headers.set('Set-Cookie', cookie.serialize('token', '', {
+        maxAge: -1,
+        path: '/',
+    }));
+    return response;
+}

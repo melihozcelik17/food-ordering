@@ -14,6 +14,9 @@ import { getSession, signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
+
+// videoyu izlemeye devam et yapılacak eksik kalanlar var
+
 const Profile = ({ user }) => {
 
     const [tabs, setTabs] = useState(0);
@@ -48,6 +51,7 @@ const Profile = ({ user }) => {
             fetchUserData();
         }
     }, [session?.user?.id]);
+
 
 
     const onSubmit = async (values, actions) => {
@@ -127,11 +131,12 @@ const Profile = ({ user }) => {
         },
     ]
 
+
     return (
         <div className='flex px-10 min-h-[calc(100vh-433px)] lg:flex-row flex-col lg:mb-0 mb-10'>
             <div className='lg:w-80 w-100 flex-shrink-0'>
                 <div className='relative flex flex-col items-center px-10 py-5 border border-b-0'>
-                    <div><Image src="/images/client2.jpg" alt='' width={100} height={100} className='rounded-full' /></div>
+                    <div><Image src={user.Image ? user.Image : "/images/client.png"} alt='' width={100} height={100} className='rounded-full' /></div>
                     <b className='text-2xl mt-1'>{session?.user?.name || "User Name"}</b>
                 </div>
                 <ul className='text-center font-semibold '>
@@ -149,7 +154,7 @@ const Profile = ({ user }) => {
                         <button className='ml-1'>Exit</button></li>
                 </ul>
             </div>
-            {tabs === 0 && <Account />}
+            {tabs === 0 && <Account user={user} />}
             {tabs === 1 && <Password />}
             {tabs === 2 && <Order />}
         </div >

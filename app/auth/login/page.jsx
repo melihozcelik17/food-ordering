@@ -37,28 +37,24 @@ const Login = () => {
 
     useEffect(() => {
         const getUser = async () => {
-            if (!session?.user?.email) return; // Eğer oturum bilgisi yoksa veya oturum email bilgisi yoksa işlemi sonlandır
             try {
-                // API'den kullanıcı bilgilerini alıyoruz
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/users`);
-                const foundUser = res.data?.find((user) => user.email === session.user.email);
+                setCurrentUser(
+                    res.data?.find((user) => user.email === session?.user?.email)
+                );
 
-                // Eğer kullanıcı bulunduysa, currentUser'ı ayarla
-                if (foundUser) {
-                    setCurrentUser(foundUser);
-                }
+                session && push("/pages/profile" + currentUser?._id)
             } catch (err) {
                 console.error("Error fetching user data:", err);
             }
         };
 
         getUser();
-    }, [session]);
-
+    }, [session, push, currentUser?._id]);
 
     useEffect(() => {
         if (session && currentUser) {
-            push(`/pages/profile/${currentUser.id}`); // currentUser mevcut olduğunda id ile yönlendirme yap
+            push(`/pages/profile/${currentUser.id}`);
         }
     }, [session, push, currentUser]);
 
@@ -116,7 +112,7 @@ const Login = () => {
                         LOGIN
                     </button>
                     <button
-                        className="btn-primary !bg-secondary"
+                        className="btn-primary !bg-secondary flex items-center justify-center"
                         type="button"
                         onClick={() => signIn("github")}
                     >

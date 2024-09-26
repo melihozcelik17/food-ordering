@@ -15,46 +15,48 @@ import Footer from '@/components/admin/Footer';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import AddProduct from '@/components/admin/AddProduct';
 
 const Profile = () => {
     const [tabs, setTabs] = useState(0);
     const { push } = useRouter();
+    const [isProductModal, setIsProductModal] = useState(false);
 
-    useEffect(() => {
-        const checkAuthorization = async () => {
-            try {
-                const response = await axios.get('/api/check-token', {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                if (response.status === 200) {
-                    setIsAuthorized(true);
-                } else {
-                    setIsAuthorized(false);
-                    push('/admin');
-                }
-            } catch (error) {
-                setIsAuthorized(false);
-                push('/admin');
-            }
-        };
 
-        checkAuthorization();
-    }, [push]);
+    // useEffect(() => {
+    //     const checkAuthorization = async () => {
+    //         try {
+    //             const response = await axios.get('/api/check-token', {
+    //                 headers: {
+    //                     'Authorization': `Bearer ${localStorage.getItem('token')}`
+    //                 }
+    //             });
+    //             if (response.status === 200) {
+    //                 setIsAuthorized(true);
+    //             } else {
+    //                 setIsAuthorized(false);
+    //                 push('/admin');
+    //             }
+    //         } catch (error) {
+    //             setIsAuthorized(false);
+    //             push('/admin');
+    //         }
+    //     };
+
+    //     checkAuthorization();
+    // }, [push]);
 
 
 
     const closeAdminAccount = async () => {
         try {
             if (confirm("Are you sure you want to close your Admin account?")) {
-                const res = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/pages/admin`)
+                const res = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/admin`)
                 if (
                     res.status === 200
                 ) {
-                    push('/admin')
+                    push('/api/admin')
                     toast.success('Admin account closed successfully')
-
 
                 }
             }
@@ -172,6 +174,10 @@ const Profile = () => {
             {tabs === 1 && <Order />}
             {tabs === 2 && <Category />}
             {tabs === 3 && <Footer />}
+            {isProductModal && <AddProduct setIsProductModal={setIsProductModal} />}
+            <button className='btn-primary !w-10 !h-10 !p-0 absolute bottom-14 right-10 text-4xl ' onClick={() => setIsProductModal(true)}>
+                +
+            </button>
 
         </div >
     )

@@ -9,7 +9,7 @@ const CampaignsItem = () => {
 
         <div className='bg-secondary flex-1 rounded-md py-5 px-[15px] flex items-center gap-x-4'>
             <div className='relative md:w-44 md:h-44 w-36 h-36 after:content-[""]  border-primary border-[5px] rounded-full owerflow-hidden '>
-                <Image src="/images/o1.jpg" alt='' layout='fill' objectFit='cover ' className='hover:scale-105 transition-all duration-200 rounded-full '>
+                <Image src="/images/o1.jpg" alt='' layout='fill' objectFit='cover ' className='hover:scale-105 transition-all duration-200 rounded-full ' property='true'>
                 </Image>
             </div>
             <div className='text-white '>

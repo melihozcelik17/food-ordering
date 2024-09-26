@@ -38,6 +38,7 @@ const Carousel = () => {
                         alt=""
                         layout="fill"
                         objectFit="cover"
+                        property="true"
                     />
                 </div>
             </div>

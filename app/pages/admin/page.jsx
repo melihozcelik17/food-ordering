@@ -14,11 +14,11 @@ const Login = () => {
 
     const onSubmit = async (values, actions) => {
         try {
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/login`, values); // Assume API route for admin login
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/login`, values);
             if (res.status === 200) {
                 actions.resetForm();
                 toast.success("Admin Login successful");
-                router.push("/admin/profile");
+                await router.push("/pages/admin/profile");
             }
         } catch (err) {
             console.error(err);

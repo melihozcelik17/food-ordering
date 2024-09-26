@@ -1,22 +1,19 @@
+
 import User from "@/models/User";
 import dbConnect from "@/util/dbConnect";
 
-
-
-const handler = async (req, res) => {
+export const GET = async (req, { params }) => {
     await dbConnect();
-    const { method, query: { id } } = req;
+    const { id } = params;
 
-    if (method === "GET") {
-        try {
-            const user = await User.findById(id);
-            res.status(200).json(user);
-        } catch (err) {
-            console.log(err);
+    try {
+        const user = await User.findById(id);
+        if (!user) {
+            return new Response(JSON.stringify({ message: "User not found" }), { status: 404 });
         }
+        return new Response(JSON.stringify(user), { status: 200 });
+    } catch (err) {
+        console.error(err);
+        return new Response(JSON.stringify({ message: "Server Error" }), { status: 500 });
     }
-
-
 };
-
-export default handler;

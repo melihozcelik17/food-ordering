@@ -8,7 +8,7 @@ import { useState } from "react";
 
 
 
-const Account = () => {
+const Account = (user) => {
 
     const [tabs, setTabs] = useState(0);
 
@@ -20,12 +20,13 @@ const Account = () => {
 
     const { values, errors, touched, handleSubmit, handleChange, handleBlur } = useFormik({
         initialValues: {
-            fullName: '',
-            phoneNumber: '',
-            email: '',
-            address: '',
-            job: '',
-            bio: '',
+
+            fullName: user?.fullName,
+            phoneNumber: user?.phoneNumber,
+            email: user?.email,
+            address: user?.address,
+            job: user?.job,
+            bio: user?.bio,
         },
         onSubmit,
         validationSchema: profileSchema,
