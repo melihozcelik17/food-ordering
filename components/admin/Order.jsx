@@ -1,7 +1,44 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Title from '../ui/Title'
+import axios from 'axios'
 
 const Order = () => {
+    const [orders, setOrders] = useState([]);
+
+    const status = [
+        "Preparing", " On The Way", " Delivered"
+    ]
+    useEffect(() => {
+        const getOrders = async () => {
+            try {
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/orders`);
+                setOrders(res.data);
+            } catch (err) {
+                console.error(err)
+
+            }
+        }
+        getOrders();
+    }, [])
+
+    const handleStatus = async (id) => {
+        const item = orders.find((order) => order._id === id);
+        const currentStatus = item.status;
+        try {
+            const res = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/orders/${id}`,
+                {
+                    status: currentStatus + 1
+                }
+            )
+            setOrders([res.data, ...orders.filter((order) => order._id !== id)])
+        } catch (err) {
+            console.error(err)
+
+        }
+
+    }
+
+
     return (
         <div className='lg:p-8 flex-1 lg:mt-0 mt-5 '>
             <Title addClass="text-[40px]" >Orders </Title>
@@ -18,22 +55,30 @@ const Order = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className='transition-all bg-secondary border-gray-700 hover:bg-primary '>
-                            <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white gap-x-1 justify-center' >
-                                15616545646
+                        {orders.length > 0 &&
+                            orders
+                                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                                .map((order) => (
+                                    <tr className='transition-all bg-secondary border-gray-700 hover:bg-primary ' key={order._id}>
+                                        <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white gap-x-1 justify-center' >
+                                            {order?._id.substring(0, 6)}
 
-                            </td>
-                            <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white' >
-                                <span>
-                                    Melih Özçelik
-                                </span>
-                            </td>
-                            <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white' >$20</td>
-                            <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white' >Cash</td>
-                            <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white' >Preparing</td>
-                            <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white'><button className='btn-primary !bg-success'>Next Stage</button> </td>
+                                        </td>
+                                        <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white'  >
+                                            <span>
+                                                {order?.customer}
+                                            </span>
+                                        </td>
+                                        <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white' >$ {order?.total}</td>
+                                        <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white' > {order?.method === 0 ? "Cash" : "Card"}</td>
+                                        <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white' >{Preparing}</td>
+                                        <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white'>
+                                            <button className='btn-primary !bg-success' onClick={() => handleStatus(order?._id)}
+                                                disabled={order?.status > 1}
+                                            >Next Stage</button> </td>
 
-                        </tr>
+                                    </tr>
+                                ))}
                     </tbody>
                 </table>
             </div>

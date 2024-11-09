@@ -9,7 +9,7 @@ import { profileSchema } from '@/schema/profile';
 import { useState, useEffect } from "react";
 import Account from '@/components/profile/Account';
 import Password from '@/components/profile/Password';
-import Order from '../order/page';
+import Order from '../order/[id]/page';
 import { getSession, signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';

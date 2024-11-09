@@ -1,14 +1,60 @@
 "use client"
 import Title from '@/components/ui/Title';
 import { reset } from '@/redux/cartSlice';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import Image from 'next/legacy/image';
-import React from 'react'
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { toast } from 'react-toastify';
 
 
 const Cart = () => {
+    const { data: session } = useSession();
     const cart = useSelector((state) => state.cart);
     const dispatch = useDispatch();
+    const [users, setUsers] = useState([]);
+    const user = users?.find((user) => user.email === session?.user?.email);
+    const router = useRouter()
+
+    const NewOrder = {
+        customer: user?.fullName,
+        address: user?.address ? user?.address : "No address",
+        total: cart.total,
+        method: 0,
+    }
+    const createOrder = async () => {
+        try {
+            if (session) {
+                if (confirm("Are you sure to order?")) {
+                    const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, NewOrder);
+                    if (res.status === 201) {
+                        router.push(`/order/${res.data._id}`);
+                        dispatch(reset());
+                        toast.success("Order created successfully", { autoClose: 1000 });
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("Error creating order:", err.response?.data || err.message);
+            toast.error("Please login first!");
+        }
+    }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const categoryRes = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/users`);
+                setUsers(categoryRes.data || []);
+            } catch (err) {
+                console.error("Error fetching users:", err);
+            }
+        };
+
+        fetchData();
+    }, []);
+
 
 
     return (
@@ -25,10 +71,10 @@ const Cart = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {cart.products.map((product) => (
-                                <tr className='transition-all bg-secondary border-gray-700 hover:bg-primary ' key={product.id}>
+                            {cart.products.map((product, index) => (
+                                <tr className='transition-all bg-secondary border-gray-700 hover:bg-primary ' key={index}>
                                     <td className='py-4 px-6 font-medium whitespace-nowrap hover:text-white flex items-center gap-x-1 justify-center' >
-                                        <Image src="/images/f1.png" alt=''
+                                        <Image src={product.img} alt=''
                                             width={40} height={40}></Image>
                                         <span>
                                             {product.name}
@@ -57,7 +103,7 @@ const Cart = () => {
                         <b className='inline-block my-1'>Discount:</b> $0.00 <br />
                         <b>Total:</b> ${cart.total}
                     </div>
-                    <button className='btn-primary mt-4 md:w-auto w-52 ' onClick={() => dispatch(reset())}>Checkout Now!</button>
+                    <button className='btn-primary mt-4 md:w-auto w-52 ' onClick={createOrder}>Checkout Now!</button>
                 </div>
             </div>
         </div>

@@ -9,11 +9,12 @@ import Layout from "@/layout/Layout";
 import store from "@/redux/store";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
-
 import Providers from "@/redux/provider";
 import SessionProviders from "@/redux/sessionProvider";
+
+import RouterEventsHandler from "@/components/RouterEventsHandler/RouterEventsHandler";
+
+
 
 
 const openSans = Open_Sans({ subsets: ["latin"] });
@@ -36,6 +37,7 @@ export default function RootLayout({ children }) {
         <SessionProviders >
           <Providers>
             <ToastContainer />
+            <RouterEventsHandler />
             <Layout>{children}</Layout>
           </Providers>
         </SessionProviders>
